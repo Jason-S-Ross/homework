@@ -1,0 +1,423 @@
+
+#+TITLE: Chapter 2 Exercises
+#+DESCRIPTION: Mathematical Methods in Engineering, Karman and Biot
+#+AUTHOR: Jason Ross
+#+OPTIONS: toc:nil num:t numeq:nil
+#+CONTEXT_HEADER: \usemodule[pret-python]
+#+CONTEXT_PRESET: article
+
+* Background
+  The differential equation
+  $$\frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + \left( 1 - \frac{ \nu^2 }{ x^2 } \right) y = 0 $$
+  is known as Bessel's differential equation. Every value of the
+  parameter $\nu$ is associated with a pair of fundamental
+  solutions called /Bessel functions/ of order $\nu$. One of
+  them, which is finite at $x = 0$, is called the
+  /Bessel function of the first kind/, and the other, the
+  /Bessel function of the second kind./
+  
+  We can solve this equation for $\nu = 0$ with a series. With
+  $\nu = 0$, the equation becomes
+  \begin{align}
+  \frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + y &= 0
+  \end{align}
+  Assume a series solution of the form
+  \begin{align*}
+  y &= a_0 + a_1 x + a_2 x^2 + a_3 x^3 + a_4 x^4 \ldots{} + a_n x^n
+  \end{align*}
+  We therefore have
+  \begin{align*}
+  \frac{ dy }{ dx } &= a_1 + 2 a_2 x + 3 a_3 x^2 + 4 a_4 x^3 \ldots{} + n a_n x^{ n - 1 } \\
+  \frac{ d^2 y }{ dx^2 } &= 2 a_2 + 6 a_3 x + 12 a_4 x^2 \ldots{} + n ( n - 1 ) a_n x^ { n - 2 } \\
+  \frac{ 1 }{ x } \frac{ dy }{ dx } &= a_1 \frac{ 1 }{ x } + 2 a_2 + 3 a_3 x + 4 a_4 x^2 \ldots{}
+  + n a_n x^{ n - 2 } \\
+  \frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + y &= 
+  2 a_2 + 6 a_3 x + 12 a_4 x^2 \ldots{} + n ( n - 1 ) a_n x^ { n - 2 } \\
+  &+  a_1 \frac{ 1 }{ x } + 2 a_2 + 3 a_3 x + 4 a_4 x^2 \ldots{} + n a_n x^{ n - 2 } \\
+  &+ a_0 + a_1 x + a_2 x^2 + a_3 x^3 + a_4 x^4 \ldots{} + a_n x^n \\
+  &= 0
+  \end{align*}
+  Grouping terms by common powers of $x$ we get
+  \begin{align*}
+  a_1 &= 0 \\
+  a_0 + 4 a_2 &= 0 \\
+  a_1 + 9 a_3 &= 0 \\
+  a_2 + 16 a_4 &= 0 \\
+  a_n + ( n + 2 ) ^2 a_{ n + 2 } &= 0 
+  \end{align*}
+  Because $a_1 = 0$, all odd-indexed a_n must be also. Therefore, our series
+  can be expressed in terms of $a_0$ as
+  \begin{align*}
+  y &= a_0 \sum_{ n = 1 }^{ \infty }{ \frac{ ( -1 )^n }{ ( 2 n )^2 ( n! )^2 } x^{ 2 n }}
+  \end{align*}
+  We will let $J_0(x)$ be the above solution with $a_0 = 1$.
+  Because we have a second order differential equation, we seek a second solution.
+  We can find this solution by letting $y = u J_0(x)$ where $J_0(x)$ is the first solution.
+  \begin{align*}
+  \frac{ dy }{ dx } &= u^{'} J_0(x) + u J_0^{'}(x) \\
+  \frac{ d^2 y }{ dx^2 } &= u^{''} J_0(x) + 2 u^{'} J_0^{'}(x) + u J_0^{''}(x) \\
+  \frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + y &=
+  u^{''} J_0(x) + 2 u^{'} J_0^{'}(x) + u J_0^{''}(x)
+  + \frac{ 1 }{ x } \left( u^{'} J_0(x) + u J_0^{'}(x) \right)
+  + u J_0(x) \\
+  &= u \left[ J_0^{''}(x) + \frac{ 1 }{ x } J_0^{'}(x) + J_0(x) \right]
+  + u^{''} J_0(x) + 2 u^{'} J_0^{'}(x) + \frac{ 1 }{ x } u^{'} J_0(x)  \\
+  &= u^{''} J_0(x) + 2 u^{'} J_0^{'}(x) + \frac{ 1 }{ x } u^{'} J_0(x)  
+  \end{align*}
+  We can divide both sides by $J_0$ to get
+  \begin{align*}
+  0 &= u^{''} + u^{'} \left( \frac{ 1 }{ x } + 2 \frac{ J_0^{'}(x) }{ J_0(x) } \right)
+  \end{align*}
+  If we let $q = \frac{ du }{ dx }$ we get
+  \begin{align*}
+  0 &= \frac{ dq }{ dx } + q \left( \frac{  1 }{ x } + 2 \frac{ J_0^{'}(x)  }{ J_0(x) } \right) \\
+  \frac{ 1 }{ q } \frac{ dq }{ dx } &= - \frac{  1 }{ x } - 2 \frac{ J_0^{'}(x) }{ J_0(x) } \\
+  \end{align*}
+  Letting $Q = \int{ \frac{ 1 }{ q } dq}$ we see that
+  $\frac{ dQ }{ dx } = \frac{ 1 }{ q }\frac{ dq }{ dx}$
+  so we have a separable differential equation and can integrate each side separately.
+  \begin{align*}
+  \int{ \frac{ 1 }{ q } dq } &= - \int{ \frac{ 1 }{ x } + 2 \frac{  J_0^{'}(x) }{ J_0(x) } dx } \\
+  \log{ q } &= - \log{ x } - \int{  2 \frac{  J_0^{'}(x) }{J_0(x) } dx } \\
+  \end{align*}
+  We can integrate the last bit with a substitution. Letting $v = J_0(x), dv = J_0^{'}(x) dx$
+  we can rewrite it as $\int{ \frac{1}{v} dv} = \log{ v } = \log{ J_0(x) }$.
+  Thus,
+  \begin{align*}
+  \log{ q } &= - \log{ x } - 2 \log{ J_0(x) } + B\\
+  q &= \frac{ B }{ x \left( J_0(x) \right) ^2 }\\
+  u &= \int{\frac{ B }{ x \left( J_0(x) \right) ^2 } dx} + A \\
+  y &= J_0(x) \int{\frac{ B }{ x \left( J_0(x) \right) ^2 } dx} + J_0(x) A \\ 
+  \end{align*}
+  
+* Problems
+  
+** Problem 1
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Find the general solution of
+     $$x \frac{ d }{ dx} \left( x \frac{ dy }{ dx } \right) + k^2 x^2 y = 0$$
+     #+END_QUOTE
+   - Solution :: We seek a form of the equation similar to
+     $$ \frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + y = 0 $$
+     Let's distribute the derivative through the parentheses.
+     \begin{align*}
+     x^2 \frac{ d^2y }{ dx^2 } + x \frac{ dy }{ dx } + k^2 x^2 y &= 0 \\
+     \frac{ d^2y }{ dx^2 } + \frac{ 1 }{ x }\frac{ dy }{ dx } + k^2 y &= 0 \\
+     let \quad{} u &= k x \\
+     x &= \frac{ u }{ k }\\
+     \frac{ dy }{ du } &= \frac{ dy }{ dx }\frac{ dx }{ du } = \frac{ 1 }{ k } \frac{ dy }{ dx }\\
+     \frac{ d^2 y }{ du^2 } &= \frac{ 1 }{ k^2 } \frac{ d^2 y}{ dx^2 } \\
+     x^2 \frac{ d^2y }{ dx^2 } + x \frac{ dy }{ dx } + k^2 x^2 y &=
+     \frac{ u^2 }{ k^2 } k^2 \frac{ d^2 y }{ du^2 } + \frac{ u }{ k } k \frac{ dy }{ du }
+     + k^2 \frac{ u^2 }{ k^2 } y \\
+     &= u^2 \frac{ d^2 y }{ du^2 } + u \frac{ dy }{ du } + u^2 y \\
+     &= \frac{ d^2 y }{ du^2 } + \frac{ 1 }{ u }\frac{ dy }{ du } + y
+     \end{align*}
+     Now we have an expression in terms of $u$, which is a standard Bessel function
+     of zeroth order. The general solution is
+     \begin{align*}
+     y &= C_1 J_0(u) + C_2 Y_0(u) \\
+     &= C_1 J_0( k x ) + C_2 Y_0( k x )
+     \end{align*}
+     
+     
+** Problem 2
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Plot the functions
+     \begin{align*}
+     y &= J_0(x^2)\\
+     y &= Y_0(x^2)
+     \end{align*}
+     #+END_QUOTE
+   - Solution :: Use matplotlib
+
+     #+BEGIN_SRC python :results file :exports both
+       import matplotlib.pyplot as plt
+       from scipy.special import jv, yv
+       import numpy as np
+       x = np.linspace(0, 10, 1000)
+       j0 = jv(0, x**2)
+       y0 = yv(0, x**2)
+       plt.plot(x, j0, label="$J_0(x^2)$")
+       plt.plot(x, y0, label="$Y_0(x^2)$")
+       plt.legend()
+       fname = "bessel2.pdf"
+       plt.savefig(fname)
+       return fname
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:myfig.pdf]]
+
+** Problem 3
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Solve graphically the equation
+     $$ J_0(x) = \frac{1}{4} x $$
+     #+END_QUOTE
+   - Solution :: Use matplotlib
+
+     #+BEGIN_SRC python :results file :exports both
+       import matplotlib.pyplot as plt
+       from scipy.special import jv, yv
+       import numpy as np
+       x = np.linspace(1, 2, 100)
+       j0 = jv(0, x)
+       y = 1/4 * x
+       plt.plot(x, j0)
+       plt.plot(x, y)
+       fname = "bessel3.pdf"
+       plt.savefig(fname)
+       return fname
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:bessel3.pdf]]
+
+     Looks like it's about 1.65
+
+** Problem 4
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Find the general solution of the equation
+     $$ \frac{ d^2 y}{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } - k^2 y = a $$
+     #+END_QUOTE
+   - Solution :: Let's take the same approach we took with [[Problem 1]].
+     \begin{align*}
+     let \quad u &= i k x \\
+     x &= \frac{ - i u }{ k } \\
+     \frac{ dy }{ du } &= \frac{ -i }{ k } \frac{ dy }{ dx } \\
+     \frac{ d^2 y }{ du^2 } &= \frac{ -1 }{ k^2 } \frac{ d^2 y }{ dx^2 } \\
+     - k^2 \frac{ d^2 y }{ du^2 } + i k \frac{ i k }{ u } \frac{ dy }{ du } - k^2 y &= a \\
+     - k^2 \frac{ d^2 y }{ du^2 } - k^2 \frac{ 1 }{ u } \frac{ dy }{ du } - k^2 y &= a \\
+     \frac{ d^2 y }{ du^2 } + \frac{ 1 }{ u } \frac{ dy }{ du } + y &= a \\
+     \end{align*}
+
+     The solution to this equation for $a = 0$ is $y(x) = C_1 J_0(k i x) + C_2 Y_0(k i x)$.
+     A particular solution exists for $y = -\frac{a^2}{k}$. Also, solutions for
+     Bessel functions with complex arguments are defined as $I_0(x) = J_0(i x)$
+     and $K_0(x) = Y_0( i x )$. Therefore, our final solution is
+     $$ y(x) = C_1 I_0(k x) + C_2 K_0(k x) - \frac{a^2}{k}$$
+
+** Problem 5
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Find the general solution of
+     $$ \frac{d^2 y}{ dx^2 } + \frac{ 5 }{ x } \frac{ dy }{ dx } - 16 x^4 y = 0 $$
+     #+END_QUOTE
+   - Solution :: Multiply the equation by a power of $x$ so that it takes the form
+     $$ \frac{ d }{ dx } \left( x^m \frac{dy}{dx} \right) + c x^n y = 0 $$
+
+     Let's expand the above equation and work backwards to find the appropriate power
+     of $x$
+     \begin{align*}
+     &\frac{ d }{ dx } \left( x^m \frac{dy}{dx} \right) + c x^n y  \\ 
+     &= x^m \frac{ d^2 y }{ dx^2 } + m x^{m-1} \frac{ dy }{ dx } + c x^n y \\
+     &= x^p \left( \frac{d^2 y}{ dx^2 } + \frac{ 5 }{ x } \frac{ dy }{ dx } - 16 x^4 y \right)
+     \end{align*}
+     We can see that $m=5, c = 16$, therefore $p = -5, n = -1$
+     \begin{align*}
+     x^{-5} \left( \frac{d^2 y}{ dx^2 } + \frac{ 5 }{ x } \frac{ dy }{ dx } - 16 x^4 y \right) &=
+     x^{-5} \frac{ d^2 y }{ dx^2 } + \frac{ 5 }{ x^6 } \frac{ dy }{ dx } - 16 \frac{ 1 }{ x^4 } y\\
+     \frac{d^2 y}{ dx^2 } + \frac{ 5 }{ x } \frac{ dy }{ dx } - 16 x^4 y &=
+     x^{ 5 } \left( \frac{ d }{ dx } \left( x^5 \frac{ dy }{ dx } \right) + 16 x^{-1} y \right)
+     \end{align*}
+     #+BEGIN_QUOTE
+     Reworking the derivation from the book, we seek a solution to the equation
+     $$ \frac{ d }{ dx } \left( x^m \frac{ dy }{ dx } \right) + c x^n y = 0$$
+     We can make a substitution for x
+     \begin{align*}
+     & let \quad t, \alpha \quad s.t. \quad x = t^{\alpha} \\
+     & dx = \alpha t^{\alpha - 1} dt \\
+     & \frac{dy}{dt} = \frac{ dy }{ dx } \frac{ dx }{ dt } = \frac{ dy }{ dx } \alpha t^{\alpha - 1} \\
+     & \frac{dy}{dx} = \frac{ 1 }{ \alpha t^{\alpha - 1} } \frac{ dy }{ dt} \\
+     \frac{ d }{ dx } \left( x^m \frac{dy}{dx} \right) + c x^n y
+     &= \frac{ 1 }{ \alpha t^{ \alpha - 1 } } \frac{ d }{ dt } \left( t^{ m \alpha }
+     \frac{ 1 }{ \alpha t^{ \alpha - 1 } } \frac{ dy }{ dt } \right) + c t^{ n \alpha } y\\
+     &= \frac{ 1 }{ \alpha t^{ \alpha - 1 } } \frac{ d }{ dt } \left( t^{ (m - 1) \alpha + 1}
+     \frac{ 1 }{ \alpha } \frac{ dy }{ dt } \right) + c t^{ n \alpha } y\\
+     \end{align*}
+     We can expand this derivative out:
+     \begin{align*}
+     \frac{ 1 }{ \alpha t^{ \alpha - 1 } } \left( \left( (m - 1)\alpha + 1 \right) t^{ (m - 1) \alpha }
+     \frac{ 1 }{ \alpha } \frac{ dy }{ dt } + t^{ (m - 1) \alpha + 1 } \frac{ 1 }{ \alpha }
+     \frac{ d^2 y }{ dt^2 } \right) + c t^{ n \alpha }  y & \\
+     \frac{ 1 }{ \alpha^2 }\left( ( m - 1 ) \alpha + 1  \right) t^{ m \alpha - \alpha - \alpha + 1}
+     \frac{ dy }{ dt } + t^{ m \alpha - \alpha - \alpha + 2 } \frac{ 1 }{ \alpha^2 }
+     \frac{ d^2 y }{ dt^2 } + c t^{ n \alpha } y & \\
+     \frac{ \left( m - 1 \right) \alpha + 1 }{ t } \frac{ dy }{ dt } + \frac{ d^2 y }{ dt^2 }
+     + \alpha^2 c t ^ { \alpha \left( n - m + 2 \right) - 2} y &
+     \end{align*}
+     If $\alpha \left( n - m + 2 \right) - 2 = 0$ or $\alpha = \frac{2}{n - m + 2}$
+     then this reduces to 
+     \begin{align*}
+     \frac{ \left( m - 1 \right) \alpha + 1 }{ t } \frac{ dy }{ dt } + \frac{ d^2 y }{ dt^2 }
+     + \alpha^2 c y &
+     \end{align*}
+     The solution of the differential equation is given
+     $$ \frac{ d^2 y }{ dx^2 } + \frac{ a }{ x } \frac{ dy }{ dx} + by = 0 $$
+     is given by
+     $$ y = x^{\nu} Z_{\nu} \left( x \sqrt{ b } \right) $$
+     where
+     $$ \nu = \frac{ 1 - a }{ 2 } $$
+     So we can plug in values from our equation where
+     \begin{align*}
+     \nu &=  \frac{ 1 - \left( m - 1 \right) \alpha - 1 }{ 2 } \\
+     &= \frac{ \alpha }{ 2 } \left( m - 1 \right) \\
+     &= \frac{ 1 - m }{ n - m + 2 }
+     \end{align*}
+     Using this auxiliary solution, we can find the solution of our differential
+     equation in terms of $t$.
+     \begin{align*}
+     y(t) &= t^{\nu} Z_{\nu} \left( t \sqrt{ \alpha^2 c } \right) \\
+     y(x) &= x^{ \frac{ \nu }{ \alpha }} Z_{\nu} \left( x^{\frac{ 1 }{ \alpha }} \alpha \sqrt{ c } \right)
+     \end{align*}
+     #+END_QUOTE
+
+     Coming back to our first problem, we seek a solution of the equation
+     $$\frac{ d }{ dx } \left( x^5 \frac{ dy }{ dx } + 16 x^{-1} y \right)$$
+     which is equivalent the problem we worked through in our derivation, letting
+     \begin{align*}
+     m &= 5 \\
+     c &= -16 \\
+     n &= 9
+     \end{align*}
+     we can substitute values in
+     \begin{align*}
+     \alpha &= \frac{ 2 }{ n - m + 2 } = \frac{ 2 }{ 6 } = \frac{ 1 }{ 3 } \\
+     \nu &= \frac{ 1 - m }{ n - m + 2 } = - \frac{ 4 }{ 6 } = - \frac{ 2 }{ 3 } \\
+     y(x) &= x^{ -2 } Z_{ -\frac{ 2 }{ 3 } } \left( x ^ { 3 } \frac{ 4 i }{ 3 }  \right)
+     \end{align*}
+     
+** Problem 6
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Find the general solutions of
+     \begin{align*}
+     \frac{ d^2 y }{ dx^2 } + \frac{ 3 }{ x } \frac{ dy }{ dx } + 4 y &= 0 \\
+     \frac{ d^2 y }{ dx^2 } + \frac{ dy }{ dx } - \frac{ 1 }{ 4 } y &= 0 \\
+     \end{align*}
+     #+END_QUOTE
+   - Solution 1 ::
+     Derivation
+     #+BEGIN_QUOTE
+     The differential equation
+     $$\frac{ d^2 y }{ dx^2 } + \frac{ a }{ x } \frac{ dy }{ dx } + b y = 0$$
+     can receive the substitution
+     $$ y = z x^{ \nu } $$
+     yielding
+     \begin{align*}
+     \frac{ dy }{ dx } &= \frac{ dz }{ dx } x^{ \nu } + \nu z x^{ \nu - 1 } \\
+     \frac{ d^2 y }{ dx^2 } &= \frac{ d^2 z }{ dx^2 } x^{ \nu } + 2 \nu \frac{ dz }{ dx } x^{ \nu - 1}
+     + \nu ( \nu - 1 ) z x^{ \nu - 2 } \\
+     \end{align*}
+     We can then substitute into the original equation:
+     \begin{align*}
+     \frac{ d^2 y }{ dx^2 } + \frac{ a }{ x } \frac{ dy }{ dx } + b y &=
+     \frac{ d^2 z }{ dx^2 } x^{ \nu } + 2 \nu \frac{ dz }{ dx } x^{ \nu - 1}
+     + \nu ( \nu - 1 ) z x^{ \nu - 2 }
+     + \frac{ a }{ x } \left( \frac{ dz }{ dx } x^{ \nu } + \nu z x^{ \nu - 1 } \right)
+     + b z x^{ \nu } \\
+     &= x^{ \nu } \frac{ d^2 z }{ dx^2 } + x^{ \nu - 1 } \frac{ dz }{ dx }
+     \left( 2 \nu + a \right) + \left{
+     \left[ \nu^2 - \nu  + a \nu \right] x^{ \nu - 2 } + b x^{ \nu }
+     \right} z
+     \end{align*}
+     If $2 \nu + a = 1$, $a = 1 - 2 \nu$ we can divide by $x^n$ to obtain
+     \begin{align*}
+     & \frac{ d^2 z }{ dx^2 } + \frac{ 1 }{ x } \frac{ dz }{ dx } +
+     \left[ ( \nu^2 - \nu + \nu - 2 \nu^2 ) x^{ -2 } + b \right] z \\
+     &= \frac{ d^2 z }{ dx^2 } + \frac{ 1 }{ x } \frac{ dz }{ dx } +
+     \left( b - \frac{ \nu^2 }{  x^{ -2 } } \right) z \\
+     \end{align*}
+     This has the general solution $z = Z_{\nu} \left( x \sqrt{ b } \right)$
+     and so our solution for $y$ is
+     \begin{align*}
+     \frac{ d^2 y }{ dx^2 } + \frac{ a }{ x } \frac{ dy }{ dx } + b y &= 0 \\
+     \nu &= \frac{ 1 - a }{ 2 } \\
+     y &= x^{\nu} Z_{\nu} \left( x \sqrt{ b } \right)
+     \end{align*}
+     #+END_QUOTE
+
+     So given our original problem, we have for the values of the constants
+     \begin{align*}
+     a &= 3\\
+     b &= 4\\
+     \nu &= -1 \\
+     y &= \frac{1}{x}Z_{-1} \left( 2 x \right) \\
+     y &= A J_{-1} (2 x) + B J_{-1} (2 x)
+     \end{align*}
+   - Solution 2 :: This is not a Bessel equation so we can simply let
+     $y = e^{\alpha x}$. This results in
+     \begin{align*}
+     \frac{ d^2 y }{ dx^2 } + \frac{ dy }{ dx } - \frac{ 1 }{ 4 } y &= 0 \\
+     \frac{ dy }{ dx } &= \alpha e^{ \alpha x } \\
+     \frac{ d^2 y }{ dx^2 } &= \alpha^2 e^{ \alpha x } \\
+     \alpha^2 e^{ \alpha x } + \alpha e^{ \alpha x } - \frac{ 1 }{ 4 } e^{ \alpha x } &= 0 \\
+     \alpha^2 + \alpha - \frac{ 1 }{ 4 } &= 0 \\
+     \alpha &= \frac{ -1 \pm \sqrt{ 2 } }{ 2 } \\
+     y = C_1 e ^ { \frac{ -1 + \sqrt{ 2 } }{ 2 } x} + C_2 e ^ { \frac{ -1 - \sqrt{ 2 } }{ 2 } x}
+     \end{align*}
+
+** TODO Problem 7
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     Find the general solution of
+     $$\frac{ d^2 y }{ dx^2 } + \frac{ 1 }{ x } \frac{ dy }{ dx } + \frac{ 1 }{ x^2 } y = 2x + 4$$
+     Try a particular solution of the form $\alpha x^2 + \beta x^3$
+     #+END_QUOTE
+     
+** TODO Problem 8
+
+** TODO Problem 9
+
+** TODO Problem 10
+
+** Problem 11
+   - Problem Statement ::
+     #+BEGIN_QUOTE
+     For one of the natural oscillations of a circular membrane of radius $a$
+     the deflection $w$ is given by the formula
+     $$ w = J_2 \left( \alpha_2 \frac{ r }{ a } \right) \sin { 2 \theta }$$
+     where $r$ and $\theta$ are polar coordinates in the plane of the membrane and
+     $\alpha_{2}$ is the second root of the equation $J_{2}(x) = 0$. Show that the nodal
+     lines $(w = 0)$ of the membrane are a circle and the two perpendicular diameters.
+     Plot the lines of constant height for $w = 0.1, 0.2, 0.3, 0.4, -.1, -.2, -.3, and -.4$
+     #+END_QUOTE
+   - Solution :: 
+     #+BEGIN_SRC python :results file :exports both
+       import matplotlib.pyplot as plt
+       from scipy.special import jv, yv, jn_zeros
+       import numpy as np
+       alpha_2 = jn_zeros(2, 1)
+       theta_min = 0
+       theta_max = 2 * np.pi
+       r_min = 0
+       r_max = 10
+       n_points = 100
+       R, Theta = np.meshgrid(
+           np.linspace(
+               r_min,
+               r_max,
+               n_points,
+           ),
+           np.linspace(
+               theta_min,
+               theta_max,
+               n_points,
+           ),
+       )
+       W = jv(2, alpha_2 * R / r_max) * np.sin(2 * Theta)
+       figname = "bessel11.pdf"
+       levels = np.arange(-.4, 0.5, 0.1)
+       fig, ax = plt.subplots(subplot_kw=dict(projection="polar"))
+       CS = ax.contour(Theta, R, W, levels=levels)
+       ax.clabel(CS, CS.levels, inline=True)
+       fig.savefig(figname)
+       return figname
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:bessel11.pdf]]

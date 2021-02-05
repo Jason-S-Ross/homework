@@ -1,0 +1,878 @@
+#+TITLE: Chapter 3 Exercises
+#+SUBTITLE: Fundamental Concepts of Dynamics
+#+DESCRIPTION: Mathematical Methods in Engineering, Karman and Biot
+#+AUTHOR: Jason Ross
+#+OPTIONS: toc:nil num:t numeq:nil syntax:vim
+#+CONTEXT_PRESET: article
+# #+CONTEXT_HEADER_EXTRA: \setuppapersize[letter]
+#+CONTEXT_HEADER_EXTRA: \setupformulae[grid=both]
+#+CONTEXT_HEADER_EXTRA: \setuplayout[grid=both]
+#+CONTEXT_SNIPPET: headfoot-homework colors-pigmints
+#+CONTEXT_HEADER_EXTRA: \registerunit[unit][poundforce=poundforce, poundmass=poundmass]
+#+CONTEXT_HEADER_EXTRA: \setupunittext[poundforce=lbf, poundmass=lbm]
+#+CONTEXT_HEADER_EXTRA: \setupunittext[poundforce=lbf, poundmass=lbm]
+#+CONTEXT_HEADER_EXTRA: \setupdescription[OrgDesc][align=width]
+#+DATE: 2020-01-13
+
+  #+BEGIN_EXPORT metapost
+  input dims;
+  input outlinepath;
+  #+END_EXPORT
+
+* Background
+  The linear acceleration of a system of particles is expressed as
+  $$\frac{d}{dt}\left( \sum{ m_i \frac{ d \bar{ r }_i} { dt }} \right) =
+  \sum{ \bar{ F }_i }$$
+
+  The angular acceleration of a system of particles is expressed as
+  $$\frac{d}{dt} \left( \sum{ m_i \left( \bar{ r }_i \times \bar{ v }_i \right) } \right)
+  = \sum{ \bar{ r }_i \times \bar{ F }_i}$$
+
+  The point C (the center of gravity) of a system, has the coordinates
+
+  $$x_c = \frac{ \sum{ m_i x_i } }{ \sum{ m_i }} \quad
+  y_c = \frac{ \sum{ m_i y_i } }{ \sum{ m_i }} \quad
+  z_c = \frac{ \sum{ m_i z_i } }{ \sum{ m_i }}$$
+
+  Or by its position vector
+  $$\bar{r}_c = \frac{ \sum{ m_i \bar{ r }_i }}{ \sum{ m_i }}$$
+
+  Now we can express Newton's second law in its more famous form
+
+  $$\sum{ \bar{ F }_i } = m \frac{ d^2 \bar{ r }_c }{ d^2 t }$$
+
+  The moment of the momentum (angular momentum) of the system is then
+
+  $$\bar{H} = \sum{ \left( \bar{ r }_i \times m_i \bar{ v }_i \right) }$$
+
+  We can substitute into this expression $\bar{ r }_i = \bar{ r }_c + \bar{ r }^{'}_i$
+  to obtain
+
+  $$\bar{H} = \bar{H}_c + \bar{ r }_c \times \sum{ m_i \bar{ v }_i} + \sum{ \left( \bar{ r }^{'}_i
+  \times m_i \bar{ v }_i \right)}$$
+
+  We can call the second term the moment of momentum (angular momentum)
+  of the system $\bar{ H }_c$
+  $$\bar{H} = \bar{H}_c + \bar{ r }_c \times \sum{ m_i \bar{ v }_i} + \bar{ H }_c$$
+
+  Therefore, by differentiation,
+
+  $$\frac{ d \bar{ H }}{ dt } = \frac{ d \bar{H}_c}{dt} + \frac{ d \bar{r}_c }{dt} \times
+  \sum{ m_i \bar{ v }_i} + \bar{r}_c \times \frac{d}{dt} \left( 
+  \sum{ m_i \bar{ v }_i} \right) $$
+
+  Because by the definition of momentum $m \frac{ \bar{r}_c}{dt} = \sum{m_i \bar{v}_i}$
+  the cross product in the second term is zero since the vectors are parallel.
+
+  So we're left with 
+  $$\frac{ d \bar{ H }}{ dt } = \frac{ d \bar{H}_c}{dt} +
+  \bar{r}_c \times \frac{d}{dt} \left( 
+  \sum{ m_i \bar{ v }_i} \right) $$
+  which simplifies to 
+  $$\frac{ d \bar{ H }}{ dt } = \frac{ d \bar{H}_c}{dt} +
+  \bar{r}_c \times  \sum{\bar{F}_i}$$
+
+  Letting $\bar{M}$ be the sum of moments on the system, or
+  $$\bar{M} = \sum{\left( \bar{r}_i \times \bar{F}_i \right)} = \sum{\left[
+  \left( \bar{r}_c + \bar{r}_i^{'}\right) \times \bar{F}_i \right] }$$
+
+  We can call the sum $\sum{ \left( \bar{ r }_i \times \bar{ F }_i \right) }$
+  as $\bar{M}_c$, which represents the sum of moments with respect to the center of mass.
+
+* Equations of Motion in Polar Coordinates
+In polar coordinates, we use a coordinate system of two unit vectors $\bar{u}$
+and $\bar{v}$ where $\bar{u}$ points in the radial direction and $\bar{v}$
+points in the circumferential direction.
+
+#+BEGIN_EXPORT metapost
+begingroup;
+    save r, theta, R, O, veclen, U, V, T, dtheta;
+    numeric r, theta, veclen;
+    r := 1in; theta := 45; veclen:=0.5in;
+    pair R, O, U, V;
+    R := dir(theta)*r; O := (0,0);
+    U := R + dir(theta) * veclen; V := R + dir(theta + 90) * veclen;
+    transform T, dtheta;
+    dtheta = identity shifted -R rotated 15 shifted R;
+    T = identity shifted -R scaled 2 shifted (2.5r, -r);
+
+    draw fullcircle scaled 2r;
+    drawarrow O--R;
+    label.ulft(btex $r$ etex, .5[O,R]);
+    draw_angle_dim(R, (0.1in,0), O, textext("$\theta$"), -0.5in);
+    drawarrow R--U;
+    label.urt(textext("$\bar{u}$"), U);
+    drawarrow R--V;
+    label.ulft(textext("$\bar{v}$"), V);
+    drawarrow (R--U) transformed T;
+    drawarrow ((R--U) transformed dtheta) transformed T;
+    drawarrow (R--V) transformed T;
+    drawarrow ((R--V) transformed dtheta) transformed T;
+    draw_angle_dim(
+        (U transformed dtheta transformed T),
+        (U transformed T),
+        (R transformed T),
+        textext("$d\theta$"),
+        0.5in
+    );
+    drawarrow (U transformed T)--(U transformed dtheta transformed T);
+    label.ulft(textext("$d\bar{u}$"), (U transformed dtheta transformed T));
+    drawarrow (V transformed T)--(V transformed dtheta transformed T);
+    label.llft(textext("$d\bar{v}$"), (V transformed dtheta transformed T));
+    label.lrt(textext("$\bar{u}$"), (0.5[R,U] transformed T));
+    label.urt(textext("$\bar{v}$"), (0.5[R,V] transformed T));
+endgroup;
+#+END_EXPORT
+
+Our position $\bar{r}$ is simply $r \bar{u}$. We have therefore
+
+\begin{align*}
+\bar{r} &= r\bar{u} \\
+\frac{d\bar{r}}{dt} &= \frac{dr}{dt}\bar{u} + r \frac{d\bar{u}}{dt} \\
+\frac{d^2\bar{r}}{dt} &= \frac{d^2r}{dt^2}\bar{u} +
+2 \frac{dr}{dt}\frac{d\bar{u}}{dt} +
+r \frac{d^2\bar{u}}{dt^2}
+\end{align*}
+
+Inspecting the above diagram, we can substitute $d\bar{u} = \bar{v}d\theta$ and
+$d\bar{v} = -\bar{u}d\theta$.
+
+\begin{align*}
+\frac{d\bar{r}}{dt} &= \frac{dr}{dt}\bar{u} + r \frac{d\theta}{dt}\bar{v} \\
+\frac{d^2\bar{r}}{dt^2} &= \frac{d^2r}{dt^2} \bar{u} +
+2 \frac{dr}{dt}\frac{d\theta}{dt} \bar{v} +
+r \frac{d}{dt} \left( \frac{d\theta}{dt}\bar{v} \right) \\
+&= \frac{d^2r}{dt^2} \bar{u} +
+2 \frac{dr}{dt}\frac{d\theta}{dt} \bar{v} +
+r \frac{d^2\theta}{dt^2}\bar{v} - r \left( \frac{d\theta}{dt} \right)^2 \bar{u}
+\end{align*}
+
+* Equations of Motion of a Point on a Rotating Body
+
+Suppose we have a coordinate system $C$ centered at the origin and rotated by
+the matrix $R_C$ described by the operation $r^{'} = R_C r$ where
+#+BEGIN_EXPORT context
+\startformula
+    R_c = \startmatrix[matrix:bars]
+        \NC u_x \NC v_x \NC w_x \NR
+        \NC u_y \NC v_y \NC w_y \NR
+        \NC u_z \NC v_z \NC w_z \NR
+    \stopmatrix
+\stopformula
+#+END_EXPORT
+
+We can find the velocity of the point $r$ as
+
+\begin{align*}
+\frac{d r^{'}}{dt} &= \frac{d R_C}{dt} r + R_C \frac{dr}{dt} \\
+\end{align*}
+
+Observing that by definition, the velocity of a fixed point $\bar{p}$ in the
+coordinate system is equal to $\frac{d \bar{p^{'}}}{dt} = \Omega \times
+\bar{p^{'}}$. Also, since $\bar{p^{'}} = R_C \times \bar{p}, \frac{d
+\bar{p^{'}}}{dt} = \frac{d R_C}{dt} \bar{p}$ we find
+
+$$\Omega  R_C \times \bar{p} = \frac{d R_C}{dt} \bar{p}$$
+
+and because $p$ is an arbitrarily chosen point,
+
+$$\frac{d R_C}{dt} = [\Omega] R_C$$
+
+where
+
+#+BEGIN_EXPORT context
+\startformula
+    \left[\Omega\right] = \left[\startmatrix
+        \NC 0 \NC -\omega_z \NC \omega_y \NR
+        \NC \omega_z \NC 0 \NC -\omega_x \NR
+        \NC -\omega_y \NC \omega_x \NC 0 \NR
+    \stopmatrix\right]
+    \space s.t. \space\left[\Omega\right] p = \Omega \times p
+\stopformula
+#+END_EXPORT
+
+Given this result, we can rewrite the solution for $\frac{d r^{'}}{dt}$:
+
+$$\frac{d r^{'}}{dt} = [\Omega] R_C r + R_C \frac{dr}{dt}$$
+
+And therefore, we can find the acceleration of the point:
+
+\begin{align*}
+\frac{d^2 r^{'}}{dt^2} &= \frac{d [\Omega]}{dt} R_C r +
+[\Omega] \frac{d R_C}{dt} r + [\Omega]R_C \frac{dr}{dt} +
+\frac{d R_C}{dt}\frac{dr}{dt} + R_C \frac{d^2r}{dt^2}\\
+&= \frac{d [\Omega]}{dt} R_C r + [\Omega]^2 R_C r +
+2 [\Omega]R_C \frac{dr}{dt} + R_C \frac{d^2r}{dt^2}\\
+\end{align*}
+
+By observing that $R_C r = r^{'}$, we have
+
+$$\frac{d^2 r^{'}}{dt^2} = \frac{d [\Omega]}{dt} r^{'} +
+[\Omega]^2 r^{'} + 2 [\Omega] \frac{dr^{'}}{dt} +
+\frac{d^2r^{'}}{dt^2}$$
+
+Finally, by observing that by definition, $[\Omega] p = \Omega \times p$,
+we have
+
+$$\frac{d^2 r^{'}}{dt^2} = \frac{d \Omega}{dt} \times r^{'} +
+\Omega \times \left( \Omega \times r^{'} \right) +
+2 \Omega \times \frac{dr^{'}}{dt} +
+\frac{d^2r^{'}}{dt^2}$$
+
+* The Free Precession of a Gyroscope
+Suppose we have a gyroscope that has an axis of symmetry $\zeta$ and a moment of
+inertia $A$ about that axis, and a moment of inertia $C$ about an axis $\eta$
+perpendicular to its axis of symmetry.
+
+Let us assume that the gyroscope is rotating with some angular velocity $\omega$
+and that it is simultaneously precessing about an axis $Z$ offset from its axis
+of symmetry by an angle $\theta$ with an angular velocity $\mu$. No external
+forces or moments are applied to the gyroscope.
+
+We can compute the angular momentum of the system as follows: First, the angular
+momentum about $\zeta$ is equal to $A \omega$ plus $C$ times the component of
+the rotation rate $\mu$ projected onto the $\zeta$ axis. Second, the angular
+momentum about the axis $\eta$ can be found by projecting the components of the
+precession rate $\mu$ onto the $\eta$ axis.
+
+$$\bar{H} = A \left( \omega +  \mu \cos{\theta} \right) \bar{\zeta} +
+C \mu \sin{\theta} \bar{\eta}$$
+
+Because the angular momentum is constant and because we are assumed to be
+precessing about the $Z$ axis, we know by symmetry that the angular momentum of
+the system must be directed along the $Z$ axis as well. Therefore, letting $H_z$
+be the component of angular momentum along the $Z$ axis, we have
+
+$$\bar{H} = H_z \bar{Z} = H_z \cos{\theta} \bar{\zeta} + H_z \sin{\theta} \bar{\eta}$$
+
+We can equate the components of this equation with the components of the angular
+momentum we derived previously to get
+
+\begin{align*}
+H_z \cos{\theta} &= A \left( \omega + \mu \cos {\theta}\right)  \\
+H_z \sin{\theta} &= C \mu \sin{\theta} \\
+A \omega \sin{\theta} + A \mu \cos{\theta} \sin{\theta}
+&= C \mu \sin{\theta} \cos{\theta} \\
+A \omega \sin{\theta} &= (C - A) \mu \sin{\theta} \cos{\theta}\\
+\mu &= \frac{ A \omega }{ (C - A) \cos{\theta} }
+\end{align*}
+
+In the presence of gravity, the gyroscope has a moment applied about the $\eta$
+axis equal to its weight times the horizontal component of the distance from its
+center of gravity to its tip; $M = W L \sin{\theta}$. Therefore, the rate of
+change of angular momentum of the gyroscope will be equal to $M$. We assume that
+the gyroscope is performing pure precession, so $\frac{d\bar{H}}{dt}$ is simply given
+by $\bar{\mu} \times \bar{H}$, which expands to
+\begin{align*}
+\frac{d\bar{H}}{dt} &= \bar{\mu} \times \bar{H} = M \\
+&= \bar{\mu}\bar{\zeta} \bar{H}\bar{\eta} - \bar{\mu}\bar{\eta} \bar{H}\bar{\zeta}\\
+&= \mu \cos{\theta} C \mu \sin{\theta} - \mu \sin{\theta}
+A \left(\omega + \mu \cos{\theta}\right) \\
+&= \mu^2 \cos{\theta}\sin{\theta} (C - A) - \mu \omega \sin{\theta} A
+\end{align*}
+
+
+Given our value for $M$, this gives us
+
+\begin{align*}
+W L \sin{\theta} &= \mu^2 \cos{\theta}\sin{\theta} (C - A) - \mu \omega \sin{\theta} A\\
+WL &= \mu^2 \cos{\theta} (C - A) - \mu \omega A
+\end{align*}
+* Problems
+** Problem 1
+- Problem Statement :: A rope passes over a frictionless and weightless pulley.
+  Two monkeys $M_1$ and $M_2$ are grasping the freely hanging ends of the rope.
+  Determine the motion of $M_1$ and $M_2$:
+  a. If they have the same weight, $M_1$ climbs at a weight of 1 ft/sec
+     relative to the rope, and $M_2$ merely hangs on the rope.
+
+  b. If the weight of $M_1$ is twice the weight of $M_2$ and both climb at a
+     rate of 1 ft./sec relative to the rope.
+
+  c. If the weight of $M_1$ is twice the weight of $M_2$ and $M_2$ climbs at the
+     rate of 1 ft/sec relative to the rope, and $M_1$ merely hangs on.
+  The motion starts for all cases with zero initial velocity at $t = 0$.
+
+- Solution A :: Suppose $M_1$ accelerates at a rate $a$ up to the final velocity
+  $v$. Take the limit as the acceleration approaches infinity.
+
+  Let $H_1$ and $H_2$ be the heights of $M_1$ and $M_2$ respectively. Due to the
+  monkey climbing, we have $\frac{d H_1}{dt} + \frac{d H_2}{dt} = -v$. Taking
+  the second derivative, we have $\frac{ d^2 H_1 }{ dt^2 } + \frac{ d^2 H_2 }{
+  dt^2 } = -a$. The acceleration $H_1$ is equal to the force on $M_1$ divided by
+  its mass. The acceleration $H_2$ is equal to the force on $M_2$ divided by its
+  mass. The forces on $H_1$ and $H_2$ are equal because the pulley is
+  frictionless.
+
+  Because the force on both monkeys is always the same, both monkeys climb at
+  the same rate. This rate must be half the rate that the rope is getting
+  shorter, or $\frac{1}{2}$ ft/sec.
+
+- Solution B :: The force on each monkey is equal to its mass times its
+  acceleration. The summation of forces on each monkey is equal to its weight
+  plus the tension on the rope, $T$.
+
+  Thus, we have
+
+  $$M_1 a_1 = T - g M_1$$
+  $$M_2 a_2 = T - g M_2$$
+
+  We can integrate both equations to relate the motions:
+
+  $$v_1 = \left( \frac{T}{M_1} - g \right) t + C_1$$
+  $$v_2 = \left( \frac{T}{M_2} - g \right) t + C_2$$
+
+  The rate of change of length of the rope $v_0$ is equal to $v_1 + v_2$ which
+  is equal to 1 ft/sec. Thus,
+
+  $$v_0 = \left( T \frac{M_1 + M_2}{M_1 M_2} -2 g \right) t + C$$
+
+  Because $\frac{d v_0}{dt} = 0$, we have
+
+  $$2 g = T \frac{ M_1 + M_2 }{ M_1 M_2 }$$
+
+  $$T = \frac{ 2 g M_1 M_2 }{ M_1 + M_2 }$$
+
+  Using our expression for acceleration from before, we have
+  \begin{align*}
+  a_1 &= g \frac{ M_2 - M_1 }{ M_1 + M_2 } \\
+  a_2 &= g \frac{ M_1 - M_2 }{ M_1 + M_2 } \\
+  v_1 &= g t \frac{ M_2 - M_1 }{ M_1 + M_2 } + C_1 \\
+  v_2 &= g t \frac{ M_1 - M_2 }{ M_1 + M_2 } + C_2 \\
+  \end{align*}
+
+  Substituting our values in for masses, we have
+
+  \begin{align*}
+  a_1 &= g \frac{ -1 }{ 3 } \\
+  a_2 &= g \frac{ 1 }{ 3 } \\
+  v_1 &= g t \frac{ -1 }{ 3 } + C_1 \\
+  v_2 &= g t \frac{ 1 }{ 3 } + C_2 \\
+  \end{align*}
+
+- Solution C :: Solution B solves the problem generally.
+** Problem 2
+- Problem Statement :: A single-cylinder engine is mounted such that it can move
+  freely in the horizontal direction. The piston moves horizontally, its weight
+  is 2.3 lb, and the stroke is 6.5 in; the ratio between the length $r$ of the
+  crank and the length $l$ of the connecting rod is $\frac{r}{l} = \frac{1}{5}$,
+  We assume that the mass of the connecting rod can be replaced by a mass of 0.7
+  lb at the piston and 0.8 lb at the crankpin, and that the latter mass and that
+  of the crank are balanced by a counterweight. The leaves as the only unbalance
+  the mass of $2.3 + 0.7$ lb moving with the piston.
+
+  Find the amplitude of the horizontal motion of the machine frame if the total
+  weight of the system is equal to 110 lb.
+
+  Determine the additional counterweight to be mounted at the distance of 4 in.
+  from the axis of the crankshaft so that the amplitude of the horizontal motion
+  of the machine would be zero if $l \rightarrow \infty$. What is the actual
+  remaining amplitude due to the fact that $\frac{r}{l} = \frac{1}{5}$?
+
+
+  #+BEGIN_EXPORT metapost
+  path p[];
+  pen mypen;
+  numeric L;
+  L := 100;
+  p[-1] := (((1, 0)) for i=1 upto L-1:
+    -- (cosd(i/L*360),sind(i/L*360)) endfor --cycle );
+  mypen := makepen(p[-1]);
+  picture piston;
+  pair O, Q, R;
+  O := (4in, 2in);
+  Q := (32.5in, 0);
+  R := (6.5in, 0);
+  piston := image(
+      begingroup;
+      pair v[];
+      v[0] := (0,0in);
+      v[1] := (0,4in);
+      v[2] := (6in,4in);
+      v[3] := (6in,0);
+      draw v0--v1--v2--v3--cycle;
+      draw fullcircle scaled 1in shifted O;
+      endgroup;
+  );
+  picture crank;
+  crank := image(
+      begingroup;
+      pair v[];
+      v[0] := (0,0);
+      v[1] := R;
+      pen crankpen;
+      crankpen := mypen scaled 0.75in;
+      draw envelope crankpen of (v0--v1);
+      draw fullcircle scaled 1in shifted v[1];
+      draw fullcircle scaled 1in;
+      endgroup;
+  );
+  picture connectingrod;
+  connectingrod := image(
+      begingroup;
+      pair v[];
+      v[0] := (0,0);
+      v[1] := Q;
+      pen rodpen;
+      rodpen := mypen scaled 0.75in;
+      draw envelope rodpen of (v0--v1);
+      draw fullcircle scaled 1in shifted v[1];
+      endgroup;
+  );
+  numeric scalefac;
+  numeric rodang;
+  scalefac := 0.125;
+  rodang := asin(abs(R)/abs(Q));
+  draw piston scaled scalefac;
+  draw connectingrod rotated rodang shifted O scaled scalefac ;
+  draw crank rotated 90 shifted ((abs(Q) * cosd(rodang), 0) + O) scaled scalefac ;
+  path arm;
+  arm := ((abs(Q) * cosd(rodang), 0)--((abs(Q) * cosd(rodang), 0) + (R rotated 90))) shifted O;
+  picture vdim;
+  draw_vertical_dim(
+      point 0 of (arm scaled scalefac),
+      point 1 of (arm scaled scalefac),
+      btex $r$ etex,
+      .5in);
+  path con;
+  con := (O -- point 1 of arm);
+  draw_aligned_dim(
+      point 0 of (con scaled scalefac),
+      point 1 of (con scaled scalefac),
+      btex $l$ etex,
+      -0.5in);
+  #+END_EXPORT
+  #+BEGIN_EXPORT metapost
+  begingroup;
+      numeric u;
+      u := 2in;
+      pair P[];
+      P0 = (0,0);
+      P1 = (1u, 0);
+      P2 = (0.4u, 0.7u);
+      draw P0--P1--P2--cycle;
+      draw_aligned_dim(P0, P1, btex $a$ etex, .2u);
+      draw_aligned_dim(P1, P2, btex $b$ etex, .2u);
+      draw_aligned_dim(P2, P0, btex $c$ etex, .2u);
+      draw_angle_dim(P0, P2, P1, btex $\theta$ etex, -.5u);
+      label(btex $c^2 = a^2 + b^2 - 2 a b \cos{\theta}$ etex, (0.5u, -.4u));
+  endgroup  ;
+  #+END_EXPORT
+
+- Solution ::  There are no external forces acting on the system and so the
+  momentum of the system is constant. The momentum of the system is zero
+  because it isn't moving. Therefore, the moment of mass of the system is
+  constant. The moment of mass of the system is equal to the following:
+
+  $$x * 107 = 6.5 * 3$$
+  $$x = 6.5 * 3 / 107 = 0.182 in$$
+
+  The next part can be solved by letting the counterweight have weight W.
+
+  $$6.5 in * 3 lb = 8 in * w$$
+  $$ w = 6.5 * 3 / 8 = 2.43 lb$$
+
+  The last part requires considering the actual time-dependent motion of
+  the system.
+
+  Let $y$ be the displacement of the piston rod and $theta$ be the angle
+  of the crank. Solving geometrically using the law of cosines we have
+
+  \begin{align*}
+  l^2 &= a^2 + y^2 - 2 a y \cos{\theta}\\
+  0 &= y^2 - 2 a y \cos{\theta} + a^2 - l^2 \\
+  y &= \frac{ - 2a \cos{\theta} \pm \sqrt{ 4a^2 \cos^2{\theta} - 4(a^2 - l^2) } }{2}
+  \end{align*}
+** Problem 3
+- Problem Statement :: A dog runs across a beam mounted frictionlessly on both
+  ends to a circular track.
+
+  #+BEGIN_EXPORT metapost
+  begingroup; save c, radius, P, beam, dog;
+      path c;
+      numeric radius;
+      pair dog;
+      radius := 2in;
+      c := fullcircle scaled (2 * radius);
+      draw fullcircle scaled .1in;
+      draw c;
+      draw_radial_dim((0,0), radius, 160, btex $r$ etex, -0.25in);
+      pair P[];
+      P1 := (point 5 of c);
+      P2 := (point 8 of c);
+      dotlabel.lft(btex $A$ etex, P1);
+      dotlabel.rt(btex $B$ etex, P2);
+      path beam;
+      beam := P1--P2;
+      draw beam withpen pencircle scaled 1bp;
+      dog := 0.7[P1,P2];
+      dotlabel.ulft(btex $dog$ etex, dog);
+      draw_aligned_dim(P1, P2, btex $l$ etex, -1in);
+      draw_aligned_dim((0,0), dog, btex $r_{dog}$ etex, -0.25in);
+      draw_aligned_dim((0,0), 0.5[P1,P2], textext("$h$"), -1in);
+      draw_aligned_dim(0.5[P1,P2], dog, textext("$x$"), 0.5in);
+      draw_angle_dim(.95[(0,0),P1], P2, P1, btex $\phi$ etex, 2in);
+      draw_angle_dim(.5[P1,P2], (0,-1), (0,0), btex $\alpha$ etex, .5in);
+      draw_angle_dim(dog, (0,-1), (0,0), btex $\beta$ etex, .5in);
+  endgroup;
+  #+END_EXPORT
+
+- Solution :: The angular momentum of the system is constant. The angular momentum
+  of the system is equal to the angular velocity of the beam times its moment of
+  inertia plus the cross product of the radius vector of the dog with its
+  velocity vector times its mass, or
+
+  $$\bar{H} = I \Omega + \bar{p} \times m \bar{v}$$
+
+  where $\Omega = \frac{p \alpha}{dt}$. The quantity $\bar{p} \times m \bar{v}$
+  is equal to $m h v + m \Omega p^2$ where $p = \sqrt{x^2 + h^2}$ and
+  $\left( \frac{l}{2} \right)^2 + h^2 = r^2$. Therefore,
+
+  \begin{align*}
+  \bar{H} &= I \Omega + m v \sqrt{r^2 - \left( \frac{l}{2} \right)^2}  +
+  m \Omega \left(x^2 + r^2 - \left(\frac{l}{2}\right)^2\right) = 0 \\
+
+  \Omega \left[ I + m \left( x^2 + r^2 - \left(\frac{l}{2}\right)^2
+  \right) \right] &= -v m \sqrt{r^2 - \left(\frac{l}{2}\right)^2} \\
+  \Omega &= -\frac{v \sqrt{r^2 - \left(\frac{l}{2}\right)^2}}
+  {I + m \left( x^2 + r^2 - \left(\frac{l}{2}\right)^2 \right)}
+  \end{align*}
+
+  Supposing the dog moves with constant velocity, we have $x = v t$. We
+  can then integrate both sides to get
+
+  \begin{align*}
+  \int_0^{\frac{l}{v}}{\Omega dt} &= -v \sqrt{r^2 - \left(\frac{l}{2}\right)^2 }
+  \int_0^{\frac{l}{v}}{\frac{1}{ I + m \left(v^2 t^2 + r^2 - \left(\frac{l}{2} \right)^2 \right) }}
+  \end{align*}
+
+
+
+
+
+
+
+** Problem 4
+- Problem Statement :: A rigid mathematical pendulum of length $l$ and mass
+  $m$ can swing about a horizontal axis which is mounted on a disk driven
+  with constant angular velocity $\Omega$ about a vertical axis. The
+  vertical axis passes through the point of suspension of the pendulum.
+
+  For what values of $\Omega$ is a motion possible such that $\theta$ is
+  constant and different from zero? What is the relation between
+  $\theta$ and $\Omega$?
+
+- Solution :: The distance from the weight to the central axis of rotation
+  is given by $x = l \sin{\theta}$.
+
+  #+BEGIN_EXPORT metapost
+  begingroup;
+      save theta, l, d, P, O, barOutline;
+      numeric theta, l, d;
+      pair P, O;
+      path barOutline;
+      theta := 10; l := 2in; d := 0.5in;
+      O := (0,0); P := l * dir(theta + 270);
+      barOutline := get_outlined_path(O--P, 0.125in);
+      draw barOutline withpen pencircle scaled 3pt;
+      draw_angle_dim(0.1[O,P], (0, -1), O, textext("$\theta$"), l + 0.5in);
+      fill fullcircle scaled d shifted P;
+      drawarrow P--(P + (1in,0));
+      drawarrow P--(P + (0, -1in));
+      label.urt(textext("$F$"), P + (1in, 0));
+      label.llft(textext("$W$"), P + (0, -1in));
+  endgroup
+  #+END_EXPORT
+
+  Because the bar is in equilibrium and is a two-force member,
+  $\frac{F}{W} = \tan{\theta}$. Recalling that the centripetal force
+  $F = m x \Omega^2$ and $W = m g$, we have
+
+  $$\tan{\theta} = \frac{m x \Omega^2}{m g}$$
+  $$\tan{\theta} = \frac{l \sin{\theta} \Omega^2}{g}$$
+  $$\cos{\theta} = \frac{g}{l \Omega^2}$$
+
+  Because $-1 \le \cos{\theta} \le 1$, in order for an angle to exist,
+  $$\left|\Omega\right| \ge \sqrt{\frac{g}{l}}$$
+** Problem 5
+- Problem Statement :: Assume that the disk described in the previous
+  problem is not driven but is can rotate freely about the vertical axis.
+  At the instant $t = 0$, the pendulum is in the vertical position and
+  is given an initial velocity $v_0$; at the same time the disk is
+  given an initial angular velocity $\Omega_0$. Determine the interaction
+  between the motion of the pendulum and the rotation of the disk using
+  the conservation of angular momentum.
+
+- Solution :: Let $I$ be the moment of inertia of the disk. The angular
+  momentum of the system is equal to the sum of the moment of inertia of
+  the disk times the angular velocity of the disk and the mass of the
+  pendulum times the radius of the pendulum times the radius of the
+  pendulum. Stated formally, we have
+
+  $$H = \Omega \left( I + m r^2 \right) = I \Omega_0$$
+
+  Given that $r = l \sin{\theta}$, we have
+
+  $$H = \Omega \left( I + m l^2 \sin^2{\theta} \right)$$
+
+  The centripetal force on the pendulum is equal to
+  $r \Omega^2 m$.
+
+  The total energy of the system is equal to
+
+  $$\frac{1}{2} \Omega_0^2 I + \frac{1}{2} m v_0^2 =
+  \frac{1}{2} \Omega \left(I + m l^2 \sin^2{\theta}\right) +
+  \frac{1}{2} m \left(l \frac{d\theta}{dt}\right)^2 + m g l (1 - \cos\theta)$$
+** Problem 6
+- Problem Statement :: The propeller of an airplane rotates at 1500 rpm
+  clockwise when seen from the cockpit. The airplane turns to the right in a
+  horizontal plane with a constant angular velocity corresponding to a
+  \unit{360 degree} turn in \unit{15 sec}. Find the gyroscopic moment of the
+  propeller. The diameter of the two-bladed propeller is \unit{10 foot}, its
+  mass is \unit{100 poundmass}, and the mass can be assumed to be linearly
+  distributed between a maximum at the axis and zero at the tips. Show
+  that the gyroscopic pitching moment varies during a revolution, but is
+  constant for a three- or four-bladed propeller.
+- Solution :: The first task is to determine the moment of inertia of the
+  propeller about the different axes as a function of its rotation angle
+  $\beta$. Let the $x$ axis be the longitudinal axis of the aircraft and
+  the $y$ axis be its vertical axis.
+
+  The moment of inertia $I_x$ is equal to the following integral:
+
+  $$I_x = 2 \int_0^{\frac{l}{2}}{r^2 \rho(r) dr}$$
+
+  Where $\rho(r)$, the mass per unit length of the propeller, is equal to
+  $\rho(r) = \rho_0 (1 - \frac{2 r}{l})$ where $\rho_0 = 2 \frac{m}{l}$. Then,
+  $I_x$ is
+
+  \begin{align*}
+  I_x &= 4 \frac{m}{l} \int_0^{\frac{l}{2}}{r^2 - \frac{2 r^3}{l} dr} \\
+  I_x &= 4 \frac{m}{l} \left.\left( \frac{r^3}{3} - \frac{r^4}{2 l}
+  \right) \right|_0^{\frac{l}{2}} \\
+  I_x &= 4 \frac{m}{l} \frac{l^3}{24} - \frac{l^3}{32} \\
+  I_x &= m \frac{l^2}{6} - \frac{l^2}{8} \\
+  I_x &= m \frac{l^2}{24} \\
+  \end{align*}
+
+  We must also consider $I_y(\beta)$. This is similar to $I_x$ except
+  instead of $r^2$ we use $r \sin{\beta}$ as the distance from the axis.
+
+  \begin{align*}
+  I_y(\beta) &= 2 \int_0^{\frac{l}{2}}{r^2 \sin^2{\beta} \rho(r) dr} \\
+  &= \sin^2{\beta} I_x \\
+  &= m \frac{l^2}{24}\sin^2{\beta}
+  \end{align*}
+
+  The gyroscopic pitching moment can be found by considering the angular
+  velocity components of the system. The angular momentum of the propeller
+  is equal to $\Omega I_x \hat{i} + \Psi I_y(\beta) \hat{j}$. The rate of
+  change of angular momentum is equal to
+
+  \begin{align*}
+  \frac{d}{dt} \bar{H} &= \Omega I_x \frac{d \hat{i}}{dt} +
+  \Psi \frac{d}{dt} I_y(\beta) \hat{j} \\
+  &= \Omega I_x  \Psi \hat{k}+
+  \Psi m \frac{l^2}{12}\sin{\beta}\cos{\beta} \frac{d\beta}{dt} \hat{j} \\
+  \end{align*}
+
+** TODO Problem 7
+- Problem Statement :: A top consists of a circular disk mounted on a spindle
+  that has one fixed point and is free to assume all directions around the
+  point. The disk revolves around the spindle at
+  \unit{ 800 revolution/minute },
+  its mass is \unit{2 poundmass}, its diameter is \unit{10 inch}, and its
+  distance from the fixed point is \unit{8 inch}. If the spindle is assumed to
+  make an angle of \unit{30 degree} with the vertical, what are the two speeds
+  of precession? What are these speeds if the spindle is horizontal?
+
+- Solution :: The moment of inertia of the disk about the spindle axis $\zeta$
+  is simply $C = \frac{m r^2}{2}$. The moment of inertia of the disk about the
+  $\xi$ axis is $A = \frac{m r^2}{4} + l^2 m$. Let $\mu$ be the rate of
+  precession of the gyroscope about the $y$ axis and $\Omega$ be the rate of
+  rotation of the gyroscope. Then the total angular momentum of the gyroscope
+  about the $\zeta$ axis is $H_{\zeta} = \Omega C + \mu C \cos\theta$ and the
+  angular momentum about the $\xi$ axis is $H_{\xi} = \mu A \sin\theta$.
+
+  The moment applied to the top is equal to the weight of the top times
+  the horizontal distance from the point of the top to its center of mass
+  times the weight of the top.
+
+  $$M = m g l \sin{\theta} \hat{\psi}$$
+
+  The vector quantity of the angular momentum of the top is
+
+  $$\bar{H} = C \left( \Omega + \mu \cos{\theta} \right) \hat{\zeta} +
+  A \mu \sin{\theta} \hat{\xi}$$
+
+  We have by definition, $\frac{d\bar{H}}{dt} = \bar{M}$.
+
+  $$\frac{d\bar{H}}{dt} = C \left( \Omega + \mu \cos{\theta} \right)
+  \frac{d \hat{\zeta}}{dt} + A \mu \sin{\theta} \frac{d \hat{\xi}}{dt}$$
+
+  The rate of change of a unit vector in a rotating reference frame is equal
+  to the cross product of the angular velocity of the reference frame with
+  the unit vector:
+
+  \begin{align*}
+  \frac{d\hat{\zeta}}{dt} &= \bar{\mu} \times \hat{\zeta} \\
+  \bar{\mu} &= \mu \cos{\theta} \hat{\zeta} + \mu \sin{\theta} \hat{\xi} \\
+  \bar{\mu} \times \hat{\zeta} &= \mu \sin{\theta} \hat{\psi} \\
+  \frac{d\hat{\xi}}{dt} &= \bar{\mu} \times \hat{\xi} \\
+  &= -\mu \cos{\theta} \hat{\psi}
+  \end{align*}
+
+  Therefore, the rate of change of angular momentum is
+
+  $$\frac{d\bar{H}}{dt} = C \left( \Omega + \mu \cos{\theta} \right)
+  \mu \sin{\theta}\hat{\psi} - A \mu \sin{\theta}
+  \mu \cos{\theta}\hat{\psi} = m g l \sin{\theta} \hat{\psi}$$
+
+  We can start substituting terms back in:
+
+  \begin{align*}
+  C (\Omega + \mu \cos{\theta}) \mu - A \mu^2 \cos{\theta} &= m g l \\
+  \frac{m r^2}{2} \Omega \mu + \frac{m r^2}{2} \mu^2 \cos{\theta} -
+  \frac{m r^2}{4} \mu^2 \cos{\theta} - l^2 m \mu^2 \cos{\theta} &= m g l \\
+  \frac{r^2}{2} \Omega \mu + \frac{r^2}{2} \mu^2 \cos{\theta} -
+  \frac{r^2}{4} \mu^2 \cos{\theta} - l^2 \mu^2 \cos{\theta} &= g l \\
+  \frac{r^2}{2} \Omega \mu + \frac{r^2}{4} \mu^2 \cos{\theta} -
+  l^2 \mu^2 \cos{\theta} &= g l \\
+  2 r^2 \Omega \mu + r^2 \mu^2 \cos{\theta} -
+  4 l^2 \mu^2 \cos{\theta} &= 4 g l \\
+  2 r^2 \Omega \mu + \mu^2 \cos{\theta} (r^2 - 4 l^2) &= 4 g l \\
+
+  \end{align*}
+
+
+
+#+BEGIN_SRC jupyter-python :session py :results both :pandoc t :exports both
+from sympy import *
+var("r Omega mu theta l g")
+vals = {
+    r: 5,
+    Omega: 800 * 2 * pi / 60,
+    theta: pi / 6,
+    l: 8,
+    g: 32.2*12
+}
+to_solve = (
+    2 * r**2 * Omega * mu
+    + mu**2 * cos(theta) * (r**2 - 4 * l**2)
+    - 4 * g * l
+)
+soln = solve(to_solve, mu)
+display(soln[0].subs(vals).evalf() * 60 / (2 * pi.evalf()))
+display(soln[1].subs(vals).evalf() * 60 / (2 * pi.evalf()))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+$\displaystyle 165.993797825493$
+$\displaystyle 33.9543473484036$
+:END:
+
+If $\theta = \frac{\pi}{2}$, we have a linear equation:
+
+\begin{align*}
+2 r^2 \Omega \mu  &= 4 g l \\
+\mu &= \frac{2 g l}{r^2 \Omega}
+\end{align*}
+
+#+BEGIN_SRC jupyter-python :session py :results both :pandoc t :exports both
+solve(
+    to_solve.subs(theta, pi/2), mu
+)[0].subs(vals).evalf() * 60 / (2 * pi.evalf())
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+$\displaystyle 28.1883638587675$
+:END:
+
+** Problem 8
+- Problem Statement :: Two beads can slide without friction on two rods lying in
+  a vertical plane forming an X, whose legs are inclined at 45 degrees with the
+  vertical. One of the beads weighs 2 lb, the other one 3 lb. They are connected
+  by a weightless rigid rod and can slide through the point of intersection of
+  the X. find the equilibrium positions of the beads:
+
+  #+BEGIN_EXPORT metapost
+  begingroup;
+  numeric ang, rodlen, d;
+  ang := 45; rodlen := 24in; d := 12in;
+  pair A, B;
+  path l, r;
+  transform T;
+
+  l := (0,0)--(rodlen * dir(ang));
+  r := (xpart(point 1 of l), 0)--(0, ypart(point 1 of l)) ;
+  A := point 0.8 of l;
+  B := r intersectionpoint (fullcircle scaled (2 * d) shifted A);
+  (point 0 of l) transformed T = (0,0);
+  (point 1 of l) transformed T = (2in, 2in);
+  (point 0 of r) transformed T = (2in, 0);
+  draw (l transformed T);
+  draw (r transformed T);
+  dotlabel.rt(textext("$m_1$"), (A transformed T));
+  dotlabel.lft(textext("$m_1$"), (B transformed T));
+  draw ((A--B) transformed T) withpen pencircle scaled 2pt;
+  draw_aligned_dim(
+      (A transformed T),
+      (B transformed T),
+      textext("$d$"),
+      0.25in);
+  draw_aligned_dim(
+      ((point 0.5 of l) transformed T),
+      (A transformed T),
+      textext("$x$"),
+      0.25in);
+  draw_aligned_dim(
+      ((point 0.5 of l) transformed T),
+      (B transformed T),
+      textext("$y$"),
+      -0.25in);
+  draw_angle_dim(
+      ((point 0.1 of l) transformed T),
+      (((point 0 of l) + (1, 0)) transformed T),
+      ((point 0 of l) transformed T),
+      textext("$\theta$"),
+      .25in);
+  draw_angle_dim(
+      (((point 0 of r) - (1, 0)) transformed T),
+      ((point 0.1 of r) transformed T),
+      ((point 0 of r) transformed T),
+      textext("$\theta$"),
+      .5in);
+  endgroup;
+  #+END_EXPORT
+
+  a. Using the principle of virtual displacements
+
+  b. By determining the path described by the center of gravity of the two beads
+
+- Solution a :: The positions of the masses are related by the constraint
+  $x^2 + y^2 = d^2$. If we apply displacements $\delta x, \delta y$,
+  we get as a result
+
+  \begin{align*}
+  (x + \delta x)^2 + (y + \delta y)^2 &= d^2 \\
+  x^2 + 2 x \delta x + \delta x^2 + y^2 + 2 y \delta y + \delta y^2 &= d^2 \\
+  x \delta x + y \delta y &= 0
+  \end{align*}
+
+  The height of the center of gravity is given by
+
+  $$h = x m_1 \sin{\theta} + y m_2 \sin{\theta}$$
+
+  We can solve the constraint for $y$ and minimize $h$:
+
+  \begin{align*}
+  y^2 &= d^2 - x^2 \\
+  y &= \sqrt{d^2 - x^2} \\
+  \frac{h}{\sin{\theta}} &= x m_1 + \sqrt{d^2 - x^2} m_2 \\
+  \frac{d}{dx} \frac{h}{\sin{\theta}} &= m_1 +
+  \frac{x}{\sqrt{d^2 - x^2}} = 0 \\
+  m_1^2 (d^2 - x^2) &= x^2 \\
+
+  \end{align*}
